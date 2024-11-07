@@ -21,7 +21,8 @@ ppo:
   kl_threshold: 0.02
   # PPO batch collection
   horizon_length: 8
-  minibatch_size: 32768
+  # minibatch_size: 32768
+  minibatch_size: 8192
   mini_epochs: 5
   # PPO loss setting
   clip_value: True
@@ -38,6 +39,6 @@ ppo:
   max_agent_steps: 1500000000
   # hora setting
   priv_info: False
-  priv_info_dim: 9
+  priv_info_dim: 15
   priv_info_embed_dim: 8
   proprio_adapt: False

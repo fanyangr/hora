@@ -9,8 +9,9 @@
 # Licence under BSD 3-Clause License
 # https://github.com/NVIDIA-Omniverse/IsaacGymEnvs/
 # --------------------------------------------------------
-
+from isaac_victor_envs.tasks.allegro import AllegroScrewdriverTruningRLEnv
 import isaacgym
+import torch
 
 import os
 import hydra
@@ -49,12 +50,29 @@ def main(config: DictConfig):
     config.seed = set_seed(config.seed)
 
     cprint('Start Building the Environment', 'green', attrs=['bold'])
-    env = isaacgym_task_map[config.task_name](
-        config=omegaconf_to_dict(config.task),
-        sim_device=config.sim_device,
-        graphics_device_id=config.graphics_device_id,
-        headless=config.headless,
+    # env = isaacgym_task_map[config.task_name](
+    #     config=omegaconf_to_dict(config.task),
+    #     sim_device=config.sim_device,
+    #     graphics_device_id=config.graphics_device_id,
+    #     headless=config.headless,
+    # )
+
+    env = AllegroScrewdriverTruningRLEnv(
+        control_mode='joint_impedance',
+        use_cartesian_controller=False,
+        num_envs=config['task']['env']['numEnvs'],
+        steps_per_action=60,
+        viewer=not config.headless,
+        # device='cpu',
+        device='cuda:0',
+        friction_coefficient=1.0,
+        fingers=['index', 'middle', 'thumb'],
+        gradual_control = True,
+        gravity=True, 
+        goal=torch.tensor([[0, 0, -1.5707]]),
+        action_offset=True,
     )
+
 
     output_dif = os.path.join('outputs', config.train.ppo.output_name)
     os.makedirs(output_dif, exist_ok=True)

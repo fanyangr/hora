@@ -194,6 +194,8 @@ class PPO(object):
                     self.save(os.path.join(self.nn_dir, 'last'))
 
             if mean_rewards > self.best_rewards and self.epoch_num >= self.save_best_after:
+                if mean_rewards == 0: #NOTE: this means it is not updated yet
+                    continue
                 print(f'save current best reward: {mean_rewards:.2f}')
                 self.best_rewards = mean_rewards
                 self.save(os.path.join(self.nn_dir, 'best'))
@@ -232,6 +234,7 @@ class PPO(object):
                 'priv_info': obs_dict['priv_info'],
             }
             mu = self.model.act_inference(input_dict)
+            print(mu)
             mu = torch.clamp(mu, -1.0, 1.0)
             obs_dict, r, done, info = self.env.step(mu)
 
@@ -329,7 +332,8 @@ class PPO(object):
             rewards = rewards.unsqueeze(1)
             # update dones and rewards after env step
             self.storage.update_data('dones', n, self.dones)
-            shaped_rewards = 0.01 * rewards.clone()
+            # shaped_rewards = 0.01 * rewards.clone()
+            shaped_rewards = 1.0 * rewards.clone()
             if self.value_bootstrap and 'time_outs' in infos:
                 shaped_rewards += self.gamma * res_dict['values'] * infos['time_outs'].unsqueeze(1).float()
             self.storage.update_data('rewards', n, shaped_rewards)

@@ -85,7 +85,7 @@ class ActorCritic(nn.Module):
             if isinstance(m, nn.Linear):
                 if getattr(m, 'bias', None) is not None:
                     torch.nn.init.zeros_(m.bias)
-        nn.init.constant_(self.sigma, 0)
+        nn.init.constant_(self.sigma, -1)
 
     @torch.no_grad()
     def act(self, obs_dict):
