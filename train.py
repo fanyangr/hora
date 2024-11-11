@@ -9,7 +9,7 @@
 # Licence under BSD 3-Clause License
 # https://github.com/NVIDIA-Omniverse/IsaacGymEnvs/
 # --------------------------------------------------------
-from isaac_victor_envs.tasks.allegro import AllegroScrewdriverTruningRLEnv
+from isaac_victor_envs.tasks.allegro import AllegroScrewdriverTurningEnv, AllegroScrewdriverRLWrapper
 import isaacgym
 import torch
 
@@ -57,7 +57,7 @@ def main(config: DictConfig):
     #     headless=config.headless,
     # )
 
-    env = AllegroScrewdriverTruningRLEnv(
+    env = AllegroScrewdriverTurningEnv(
         control_mode='joint_impedance',
         use_cartesian_controller=False,
         num_envs=config['task']['env']['numEnvs'],
@@ -69,9 +69,8 @@ def main(config: DictConfig):
         fingers=['index', 'middle', 'thumb'],
         gradual_control = True,
         gravity=True, 
-        goal=torch.tensor([[0, 0, -1.5707]]),
-        action_offset=True,
     )
+    env = AllegroScrewdriverRLWrapper(env)
 
 
     output_dif = os.path.join('outputs', config.train.ppo.output_name)
