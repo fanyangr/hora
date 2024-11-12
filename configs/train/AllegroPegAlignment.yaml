@@ -23,7 +23,7 @@ ppo:
   # PPO batch collection
   horizon_length: 8
   # minibatch_size: 32768
-  minibatch_size: 8192
+  minibatch_size: 4096
   mini_epochs: 5
   # PPO loss setting
   clip_value: True
