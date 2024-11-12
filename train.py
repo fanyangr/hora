@@ -9,7 +9,7 @@
 # Licence under BSD 3-Clause License
 # https://github.com/NVIDIA-Omniverse/IsaacGymEnvs/
 # --------------------------------------------------------
-from isaac_victor_envs.tasks.allegro import AllegroScrewdriverTurningEnv, AllegroScrewdriverRLWrapper
+from isaac_victor_envs.tasks.allegro import *
 import isaacgym
 import torch
 
@@ -56,21 +56,78 @@ def main(config: DictConfig):
     #     graphics_device_id=config.graphics_device_id,
     #     headless=config.headless,
     # )
-
-    env = AllegroScrewdriverTurningEnv(
-        control_mode='joint_impedance',
-        use_cartesian_controller=False,
-        num_envs=config['task']['env']['numEnvs'],
-        steps_per_action=60,
-        viewer=not config.headless,
-        # device='cpu',
-        device='cuda:0',
-        friction_coefficient=1.0,
-        fingers=['index', 'middle', 'thumb'],
-        gradual_control = True,
-        gravity=True, 
-    )
-    env = AllegroScrewdriverRLWrapper(env)
+    if config.train.name == 'AllegroScrewdriverTurning':
+        env = AllegroScrewdriverTurningEnv(num_envs=config['task']['env']['numEnvs'], 
+                                           control_mode='joint_impedance',
+                                            use_cartesian_controller=False,
+                                            steps_per_action=60,
+                                            friction_coefficient=1.0,
+                                            device=config.sim_device,
+                                            viewer=not config.headless,
+                                            joint_stiffness=3.0,
+                                            fingers=['index', 'middle', 'thumb'],
+                                            gradual_control=True,
+                                            arm_type='None',
+                                            gravity=True,
+                                            )
+        env = AllegroScrewdriverRLWrapper(env)
+    elif config.train.name == 'AllegroValveTurning':
+        env = AllegroValveTurningEnv(num_envs=config['task']['env']['numEnvs'], 
+                                    control_mode='joint_impedance',
+                                    use_cartesian_controller=False,
+                                    steps_per_action=60,
+                                    friction_coefficient=1.0,
+                                    device=config.sim_device,
+                                    valve_type="cross_valve",
+                                    viewer=not config.headless,
+                                    joint_stiffness=3.0,
+                                    fingers=['index', 'middle', 'thumb'],
+                                    gravity=True,
+                                    random_robot_pose=False,
+                                    )
+        env = AllegroValveTurningRLWrapper(env)
+    elif config.train.name == 'AllegroPegTurning':
+        env = AllegroPegTurningEnv(num_envs=config['task']['env']['numEnvs'],
+                                control_mode='joint_impedance',
+                                use_cartesian_controller=False,
+                                steps_per_action=60,
+                                friction_coefficient=1.0,
+                                device=config.sim_device,
+                                viewer=not config.headless,
+                                joint_stiffness=3.0,
+                                fingers=['index', 'middle', 'thumb'],
+                                gradual_control=True,
+                                gravity=True,
+        )
+        env = AllegroPegTurningRLWrapper(env)
+    elif config.train.name == 'AllegroPegAlignment':
+        env = AllegroPegAlignmentEnv(num_envs=config['task']['env']['numEnvs'],
+                                    control_mode='joint_impedance',
+                                    use_cartesian_controller=False,
+                                    steps_per_action=60,
+                                    friction_coefficient=1.0,
+                                    device=config.sim_device,
+                                    viewer=not config.headless,
+                                    joint_stiffness=3.0,
+                                    fingers=['index', 'middle', 'thumb'],
+                                    gradual_control=True,
+                                    gravity=True,
+                                     )
+        env = AllegroPegAlignmentRLWrapper(env)
+    elif config.train.name == 'AllegroReorientation':
+        env = AllegroReorientationEnv(num_envs=config['task']['env']['numEnvs'],
+                                control_mode='joint_impedance',
+                                use_cartesian_controller=False,
+                                steps_per_action=60,
+                                friction_coefficient=2.0,
+                                device=config.sim_device,
+                                viewer=not config.headless,
+                                joint_stiffness=3.0,
+                                fingers=['index', 'middle', 'thumb'],
+                                gradual_control=True,
+                                gravity=True,
+                                )
+        env = AllegroReorientationRLWrapper(env)
 
 
     output_dif = os.path.join('outputs', config.train.ppo.output_name)

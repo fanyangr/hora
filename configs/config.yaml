@@ -1,5 +1,5 @@
 # Task name - used to pick the class to load
-task_name: ${task.name}
+task_name: ${train.task}
 
 # if set to positive integer, overrides the default number of environments
 num_envs: ''
@@ -12,10 +12,12 @@ seed: 42
 physics_engine: 'physx'
 # whether to use cpu or gpu pipeline
 pipeline: 'gpu'
+
+device_id: 'cuda:0'
 # device for running physics simulation
-sim_device: 'cuda:0'
+sim_device: ${device_id}
 # device to run RL
-rl_device: 'cuda:0'
+rl_device: ${device_id}
 graphics_device_id: 0
 
 ## PhysX arguments
@@ -36,7 +38,7 @@ headless: False
 defaults:
   - _self_
   - task: AllegroHandHora
-  - train: ${task}
+  - train: AllegroScrewdriverTurning
   - override hydra/job_logging: disabled
 
 # set the directory where the output files get saved
