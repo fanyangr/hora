@@ -113,7 +113,7 @@ class PPO(object):
         self.dones = torch.ones((batch_size,), dtype=torch.uint8, device=self.device)
         self.agent_steps = 0
         self.max_agent_steps = self.ppo_config['max_agent_steps']
-        self.best_rewards = -1000000
+        self.best_rewards = -1e9
         # ---- Timing
         self.data_collect_time = 0
         self.rl_train_time = 0
