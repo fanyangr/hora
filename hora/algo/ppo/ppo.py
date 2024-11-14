@@ -113,7 +113,7 @@ class PPO(object):
         self.dones = torch.ones((batch_size,), dtype=torch.uint8, device=self.device)
         self.agent_steps = 0
         self.max_agent_steps = self.ppo_config['max_agent_steps']
-        self.best_rewards = -10000
+        self.best_rewards = -1000000
         # ---- Timing
         self.data_collect_time = 0
         self.rl_train_time = 0
@@ -220,7 +220,7 @@ class PPO(object):
         self.running_mean_std.load_state_dict(checkpoint['running_mean_std'])
 
     def restore_test(self, fn):
-        checkpoint = torch.load(fn)
+        checkpoint = torch.load(fn, map_location='cuda:0')
         self.model.load_state_dict(checkpoint['model'])
         if self.normalize_input:
             self.running_mean_std.load_state_dict(checkpoint['running_mean_std'])
